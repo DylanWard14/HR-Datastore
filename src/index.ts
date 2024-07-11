@@ -45,6 +45,11 @@ app.get(`/staffmember`, async (req, res) => {
         include: {
             level: true,
             office: true,
+            skills: {
+                select: {
+                    skill: true
+                },
+            },
             position: {
                 include: {
                     jobTitle: true,

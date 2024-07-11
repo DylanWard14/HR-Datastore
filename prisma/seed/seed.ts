@@ -11,6 +11,7 @@ function getRandomInt(max: number) {
 }
 
 const main = async () => {
+  console.time("seed")
   const seed = await createSeedClient();
 
   // Truncate all tables in the database
@@ -32,19 +33,40 @@ const main = async () => {
     Positions: []
   }))
 
+  const { skill } = await seed.skill((createMany) => createMany(500, {
+    staffMembers: []
+  }))
+
   // Seed the database with 10 team
-  await seed.staffMember((createMany) => createMany(36000, () => ({
-    officeId: office[getRandomInt(office.length)].id,
-    levelId: level[getRandomInt(level.length)].id,
-    position: {
-      jobTitleId: jobTitle[getRandomInt(jobTitle.length)].id,
-      teamId: team[getRandomInt(team.length)].id,
+  await seed.staffMember((createMany) => createMany(36000, () => {
+    const thirdOfSkills = skill.length / 3
+    const skillId1 = getRandomInt(thirdOfSkills);
+    const skillId2 = getRandomInt(thirdOfSkills) * 3;
+    // const skillId3 = getRandomInt(thirdOfSkills) * 3;
+    return {
+      officeId: office[getRandomInt(office.length)].id,
+      levelId: level[getRandomInt(level.length)].id,
+      skills: [{
+          skillId: skill[skillId1].id
+        },
+        // {
+        //   skillId: skill[skillId2].id
+        // },
+        // {
+        //   skillId: skill[skillId3].id
+        // },
+      ],
+      position: {
+        jobTitleId: jobTitle[getRandomInt(jobTitle.length)].id,
+        teamId: team[getRandomInt(team.length)].id,
+      }
     }
-  })));
+  }));
 
   // Type completion not working? You might want to reload your TypeScript Server to pick up the changes
 
   console.log("Database seeded successfully!");
+  console.timeEnd('seed')
 
   process.exit();
 };
