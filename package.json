@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:dev": "tsx watch ./src/index.ts"
+    "start:dev": "tsx watch ./src/index.ts",
+    "migrate": "prisma migrate dev",
+    "postmigrate": "npx @snaplet/seed sync"
   },
   "prisma": {
     "seed": "tsx prisma/seed/seed.ts"
