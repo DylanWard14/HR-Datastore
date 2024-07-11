@@ -37,6 +37,32 @@ app.get(`/level/:id`, async (req, res) => {
     res.json(user)
 })
 
+app.get(`/staffmember`, async (req, res) => {
+    const limit = Number(req.query.limit ?? 100);
+    const offset = Number(req.query.offset ?? 0);
+    const count = await prisma.staffMember.count();
+    const staffMembers = await prisma.staffMember.findMany({
+        include: {
+            level: true,
+            office: true,
+            position: {
+                include: {
+                    jobTitle: true,
+                    team: true
+                }
+            }
+        },
+        skip: offset,
+        take: limit,
+    })
+    res.json({count, data: staffMembers})
+})
+
+app.get(`/office`, async (req, res) => {
+    const offices = await prisma.office.findMany()
+    res.json(offices)
+})
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
